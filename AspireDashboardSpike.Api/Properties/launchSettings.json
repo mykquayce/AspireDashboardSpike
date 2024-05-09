@@ -1,0 +1,17 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7177",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_Kestrel__Certificates__Default__KeyPath": "%userprofile%\\.aspnet\\https\\localhost.key",
+        "ASPNETCORE_Kestrel__Certificates__Default__Path": "%userprofile%\\.aspnet\\https\\localhost.crt"
+      }
+    }
+  }
+}
