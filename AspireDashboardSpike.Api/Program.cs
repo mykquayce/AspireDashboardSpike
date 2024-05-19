@@ -1,11 +1,15 @@
 using AspireDashboardSpike.Api;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<OtlpExporterOptions>(
+	o => o.Headers = "x-otlp-api-key=c0b35c056105346aa1a89f3ce0bb8bf9c0c324182e40d4ec1a4e51a2a367a536");
 
 builder.Logging.AddOpenTelemetry(x =>
 {

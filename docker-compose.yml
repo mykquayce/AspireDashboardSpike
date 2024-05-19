@@ -23,6 +23,9 @@ services:
       DASHBOARD__TELEMETRYLIMITS__MAXLOGCOUNT: "1000"
       DASHBOARD__TELEMETRYLIMITS__MAXMETRICSCOUNT: "1000"
       DASHBOARD__TELEMETRYLIMITS__MAXTRACECOUNT: "1000"
+
+      DASHBOARD__OTLP__AUTHMODE: ApiKey
+      DASHBOARD__OTLP__PRIMARYAPIKEY: c0b35c056105346aa1a89f3ce0bb8bf9c0c324182e40d4ec1a4e51a2a367a536
     labels:
       traefik.http.routers.aspire-router.rule: Host(`aspire`)
       traefik.http.routers.aspire-router.tls: "true"
