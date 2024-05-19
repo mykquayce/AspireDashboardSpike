@@ -1,0 +1,57 @@
+services:
+
+  api:
+    image: eassbhhtgu/weatherforecast:latest
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      HTTP_PORTS: "80"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire:18889
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_SERVICE_NAME: weather-forecast
+    labels:
+      traefik.http.routers.weatherforecast-router.rule: Host(`weatherforecast`)
+      traefik.http.routers.weatherforecast-router.tls: "true"
+      traefik.http.services.weatherforecast-service.loadbalancer.server.port: "80"
+
+  aspire:
+    image: mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:18887
+      DOTNET_DASHBOARD_OTLP_ENDPOINT_URL: http://0.0.0.0:18889
+      DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: "false"
+
+      DASHBOARD__TELEMETRYLIMITS__MAXLOGCOUNT: "1000"
+      DASHBOARD__TELEMETRYLIMITS__MAXMETRICSCOUNT: "1000"
+      DASHBOARD__TELEMETRYLIMITS__MAXTRACECOUNT: "1000"
+    labels:
+      traefik.http.routers.aspire-router.rule: Host(`aspire`)
+      traefik.http.routers.aspire-router.tls: "true"
+      traefik.http.services.aspire-service.loadbalancer.server.port: "18887"
+
+  traefik:
+    image: traefik:latest
+    command:
+      - --api.insecure=true
+      - --entrypoints.websecure.address=:443
+      - --providers.docker
+      - --providers.file.directory=/etc/traefik/dynamic_conf/
+    labels:
+      traefik.http.routers.traefik-router.rule: Host(`traefik`)
+      traefik.http.routers.traefik-router.tls: "true"
+      traefik.http.services.traefik-service.loadbalancer.server.port: "8080"
+    ports:
+      - 443:443/tcp
+    secrets:
+      - source: localhost_crt
+        target: /etc/certs/localhost.crt
+      - source: localhost_key
+        target: /etc/certs/localhost.key
+    volumes:
+      - ./traefik.yml:/etc/traefik/dynamic_conf/conf.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+secrets:
+  localhost_crt:
+    file: ${USERPROFILE}\.aspnet\https\localhost.crt
+  localhost_key:
+    file: ${USERPROFILE}\.aspnet\https\localhost.key
